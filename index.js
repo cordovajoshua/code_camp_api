@@ -10,11 +10,6 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log('Database connected successfully'))
-  .catch((error) => console.log(`Error: ${error.message}`));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -22,6 +17,12 @@ app.use(cors());
 app.use('/users', userRoutes);
 app.use('/courses', courseRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Serving running at port ${PORT}`);
-});
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('Database connected successfully');
+    app.listen(PORT, () => {
+      console.log(`Serving running at port ${PORT}`);
+    });
+  })
+  .catch((error) => console.log(`Error: ${error.message}`));
